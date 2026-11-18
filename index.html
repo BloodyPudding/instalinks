@@ -5,6 +5,9 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Bloody Pudding</title>
     <meta name="description" content="Bloody Pudding: пишу код, делаю штуки для себя и много играю">
+    <link rel="canonical" href="https://links.bloodypudding.com/">
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="https://links.bloodypudding.com/">
     <meta property="og:title" content="Bloody Pudding">
     <meta property="og:description" content="Пишу код, делаю штуки для себя и много играю">
     <meta property="og:image" content="https://links.bloodypudding.com/img/og.jpg">
@@ -42,6 +45,10 @@
             }
         }
 
+        *, *::before, *::after {
+            box-sizing: border-box;
+        }
+
         body {
             margin: 0;
             min-height: 100vh;
@@ -50,15 +57,321 @@
             min-height: 100dvh;
             background: var(--bg);
             color: var(--text);
+            font-family: 'Manrope', system-ui, -apple-system, sans-serif;
             display: flex;
             justify-content: center;
+        }
+
+        .app {
+            width: 100%;
+            max-width: 440px;
+            /* Отступы по вертикали зависят от высоты окна: на ноутбуке и телефоне всё влезает в экран,
+               на высоком мониторе остаётся воздух. svh — видимая высота с учётом панелей браузера:
+               обычный vh на мобильных считается без адресной строки, и низ страницы уезжал за экран */
+            padding: clamp(16px, 5svh, 56px) 20px clamp(12px, 2.5svh, 32px);
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh;
+            min-height: 100dvh;
+        }
+
+        /* Шапка */
+        header {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: clamp(8px, 1.6svh, 16px);
+            margin-bottom: clamp(14px, 3svh, 32px);
+        }
+
+        .avatar-ring {
+            position: relative;
+            width: clamp(80px, 12svh, 108px);
+            height: clamp(80px, 12svh, 108px);
+            border-radius: 50%;
+            display: grid;
+            place-items: center;
+        }
+
+        /* Вращается только кольцо, фото стоит на месте */
+        .avatar-ring::before {
+            content: '';
+            position: absolute;
+            inset: 0;
+            border-radius: 50%;
+            background: conic-gradient(var(--accent-a), var(--accent-b), var(--accent-a));
+            animation: spin 4s linear infinite;
+        }
+
+        .avatar {
+            position: relative;
+            display: block;
+            width: calc(100% - 10px);
+            height: calc(100% - 10px);
+            border-radius: 50%;
+            border: 3px solid var(--bg);
+            background-color: var(--chip);
+            object-fit: cover;
+        }
+
+        h1 {
+            margin: 0;
+            font-size: 28px;
+            font-weight: 800;
+            letter-spacing: -0.02em;
+        }
+
+        .name {
+            text-align: center;
+        }
+
+        .bio {
+            margin: 6px 0 0;
+            font-size: 15px;
+            line-height: 1.4;
+            color: var(--muted);
+        }
+
+        /* Ссылки */
+        .app a {
+            color: inherit;
+            text-decoration: none;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        .app a:focus-visible {
+            outline: 2px solid var(--accent-a);
+            outline-offset: 3px;
+        }
+
+        .icon {
+            display: block;
+            width: 22px;
+            height: 22px;
+            background: currentColor;
+            -webkit-mask: var(--icon) center / contain no-repeat;
+            mask: var(--icon) center / contain no-repeat;
+        }
+
+        /* Карточки: крупная ссылка с иконкой и подписью */
+        .cards {
+            display: flex;
+            flex-direction: column;
+            gap: clamp(8px, 1.2svh, 12px);
+        }
+
+        .card {
+            display: flex;
+            align-items: center;
+            gap: 14px;
+            padding: 12px 16px 12px 12px;
+            border-radius: 18px;
+            border: 1.5px solid var(--line);
+            background: var(--card);
+            box-shadow: var(--shadow);
+            transition: transform .15s ease, border-color .15s ease;
+        }
+
+        .card:hover {
+            transform: translateY(-2px);
+            border-color: transparent;
+            background:
+                linear-gradient(var(--card), var(--card)) padding-box,
+                linear-gradient(135deg, var(--accent-a), var(--accent-b)) border-box;
+        }
+
+        .card:active {
+            transform: translateY(0);
+        }
+
+        .card .badge {
+            display: grid;
+            place-items: center;
+            flex: none;
+            width: 44px;
+            height: 44px;
+            border-radius: 12px;
+            background: var(--chip);
+        }
+
+        .card .text {
+            display: flex;
+            flex-direction: column;
+            min-width: 0;
+            flex: 1;
+        }
+
+        .card .title {
+            font-weight: 600;
+            font-size: 16px;
+        }
+
+        .card .note {
+            font-size: 13px;
+            color: var(--muted);
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+        }
+
+        .card .arrow {
+            color: var(--muted);
+            font-size: 18px;
+            transition: transform .15s ease, color .15s ease;
+        }
+
+        .card:hover .arrow {
+            color: var(--text);
+            transform: translate(2px, -2px);
+        }
+
+        /* Круглые кнопки с одной иконкой */
+        .icons {
+            display: flex;
+            justify-content: center;
+            gap: 12px;
+            margin-top: clamp(12px, 2.5svh, 24px);
+        }
+
+        .round {
+            display: grid;
+            place-items: center;
+            width: 48px;
+            height: 48px;
+            border-radius: 50%;
+            border: 1.5px solid var(--line);
+            background: var(--card);
+            transition: transform .15s ease, color .15s ease, border-color .15s ease;
+        }
+
+        /* Через .app, иначе перебивает color: inherit у ссылок */
+        .app .round {
+            color: var(--muted);
+        }
+
+        .round:hover {
+            transform: translateY(-2px);
+            border-color: transparent;
+            background:
+                linear-gradient(var(--card), var(--card)) padding-box,
+                linear-gradient(135deg, var(--accent-a), var(--accent-b)) border-box;
+        }
+
+        .app .round:hover {
+            color: var(--text);
+        }
+
+        /* Неприметные текстовые ссылки внизу */
+        .press {
+            margin-top: auto;
+            padding-top: clamp(16px, 3svh, 56px);
+            text-align: center;
+        }
+
+        .press h2 {
+            margin: 0 0 4px;
+            font-size: 11px;
+            font-weight: 600;
+            letter-spacing: .12em;
+            text-transform: uppercase;
+            color: var(--muted);
+            opacity: .7;
+        }
+
+        .press .list {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            column-gap: 18px;
+        }
+
+        .app .press a {
+            display: inline-block;
+            padding: 4px 0;
+            font-size: 14px;
+            color: var(--muted);
+            transition: color .15s ease;
+        }
+
+        .app .press a:hover {
+            color: var(--text);
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg) }
+        }
+
+        @media (prefers-reduced-motion: reduce) {
+            .avatar-ring::before { animation: none; }
+            .card, .round, .card .arrow { transition: none; }
+            .card:hover, .round:hover, .card:hover .arrow { transform: none; }
         }
     </style>
 </head>
 <body>
-    <links-app></links-app>
-    <script src="components/native-component.js"></script>
-    <script src="components/links-button.js"></script>
-    <script src="components/links-app.js"></script>
+    <div class="app">
+        <header>
+            <div class="avatar-ring">
+                <img class="avatar" src="img/avatar.jpg" alt="Bloody Pudding">
+            </div>
+            <div class="name">
+                <h1>Bloody Pudding</h1>
+                <p class="bio">Пишу код, делаю штуки для себя и много играю</p>
+            </div>
+        </header>
+
+        <main>
+            <section class="cards">
+                <a class="card" href="https://t.me/bloodypudding" target="_blank" rel="noopener noreferrer">
+                    <span class="badge"><span class="icon" style="--icon: url(img/icons/telegram.svg)" aria-hidden="true"></span></span>
+                    <span class="text"><span class="title">Telegram</span><span class="note">@bloodypudding</span></span>
+                    <span class="arrow" aria-hidden="true">↗</span>
+                </a>
+                <a class="card" href="https://github.com/Bl00dyPudding" target="_blank" rel="noopener noreferrer">
+                    <span class="badge"><span class="icon" style="--icon: url(img/icons/github.svg)" aria-hidden="true"></span></span>
+                    <span class="text"><span class="title">GitHub</span><span class="note">Bl00dyPudding</span></span>
+                    <span class="arrow" aria-hidden="true">↗</span>
+                </a>
+                <a class="card" href="https://steamcommunity.com/id/BloodyPudding" target="_blank" rel="noopener noreferrer">
+                    <span class="badge"><span class="icon" style="--icon: url(img/icons/steam.svg)" aria-hidden="true"></span></span>
+                    <span class="text"><span class="title">Steam</span><span class="note">BloodyPudding</span></span>
+                    <span class="arrow" aria-hidden="true">↗</span>
+                </a>
+                <a class="card" href="https://t.me/bl00dypudd1ng" target="_blank" rel="noopener noreferrer">
+                    <span class="badge"><span class="icon" style="--icon: url(img/icons/gamepad.svg)" aria-hidden="true"></span></span>
+                    <span class="text"><span class="title">Игровой дневник</span><span class="note">Отзывы и стата из Steam каждый день</span></span>
+                    <span class="arrow" aria-hidden="true">↗</span>
+                </a>
+            </section>
+
+            <section class="icons">
+                <a class="round" href="https://www.instagram.com/bloodypudding" target="_blank" rel="noopener noreferrer" aria-label="Instagram" title="Instagram">
+                    <span class="icon" style="--icon: url(img/icons/instagram.svg)" aria-hidden="true"></span>
+                </a>
+                <a class="round" href="https://vk.com/bloodypudding" target="_blank" rel="noopener noreferrer" aria-label="ВКонтакте" title="ВКонтакте">
+                    <span class="icon" style="--icon: url(img/icons/vk.svg)" aria-hidden="true"></span>
+                </a>
+                <a class="round" href="https://www.facebook.com/BloodyPudding/" target="_blank" rel="noopener noreferrer" aria-label="Facebook" title="Facebook">
+                    <span class="icon" style="--icon: url(img/icons/facebook.svg)" aria-hidden="true"></span>
+                </a>
+            </section>
+        </main>
+
+        <footer class="press">
+            <h2>Интервью</h2>
+            <div class="list">
+                <a href="https://vkvideo.ru/video-15365973_456239816" target="_blank" rel="noopener noreferrer">VK Видео 🎬 ↗</a>
+                <a href="https://gb.ru/blog/prodavat-telefony-ehto-ne-moyo/" target="_blank" rel="noopener noreferrer">GeekBrains 🧠 ↗</a>
+                <a href="https://web.archive.org/web/20220423142139/https://knife.media/feature/search-yourself/" target="_blank" rel="noopener noreferrer">Knife 🔪 ↗</a>
+            </div>
+        </footer>
+    </div>
+
+    <script>
+        // Пока вкладка не в фокусе, заголовок зовёт обратно
+        const title = document.title
+        addEventListener('blur', () => { document.title = 'Вернись...' })
+        addEventListener('focus', () => { document.title = title })
+    </script>
 </body>
 </html>
